@@ -35,12 +35,12 @@ int main(int argc, char *argv[])
 
 	/* get the address of the host */
 	if((host_ptr = gethostbyname(serv_host)) == NULL) {
-		printf("gethostbyname error");
+		perror("gethostbyname error");
 		exit(1);
 	}
   
 	if(host_ptr->h_addrtype !=  AF_INET) {
-		printf("unknown address type");
+		perror("unknown address type");
 		exit(1);
 	}
 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
 	/* open a TCP socket */
 	if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		printf("can't open stream socket");
+		perror("can't open stream socket");
 		exit(1);
 	}
 	printf("sockfd: %d\n", sockfd);	//dbg
@@ -73,13 +73,13 @@ int main(int argc, char *argv[])
 			sprintf(msg, "Hi Bob-%d!!", getdata);
 			printf("send [%s]\n", msg);	//dbg
 			write(sockfd, msg, sizeof(msg));
-
+#if 0
 			/* read a message from the client */
 			len = read(sockfd, msg, MAX_SIZE); 
 			/* make sure it's a proper string */
 			msg[len] = 0;
 			printf("%s\n", msg);
-
+#endif
 			getdata=0;
 		}
 	}
