@@ -5,4 +5,5 @@ all:
 	$(CC) -o server.o server.c
 
 clean:
-	rm -f ./*out
+	rm -f ./*.o
+	rm -f ./*.bak
