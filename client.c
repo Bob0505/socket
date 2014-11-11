@@ -19,11 +19,11 @@ int main(int argc, char *argv[])
 	struct hostent *host_ptr;
 	int		port;
 	int		buff_size = 0;
-//<asus-bob+>
-	char	msg[200];
+	char	msg[MAX_SIZE];
 	int		getdata;
-	int		len;
-//<asus-bob+>
+	int		ret;
+	int		read_len;
+
 
   /* command line: client [host [port]]*/
 	if(argc >= 2) 
@@ -56,37 +56,41 @@ int main(int argc, char *argv[])
 		perror("can't open stream socket");
 		exit(1);
 	}
-	printf("sockfd: %d\n", sockfd);	//dbg
+	printf("open a TCP socket FD%d\n", sockfd);	//dbg
 
 	/* connect to the server */    
 	if(connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-		printf("can't connect to server");
+		perror("can't connect to server");
 		exit(1);
 	}
-//<asus-bob+>
+
 	for(;;) {
+		printf("Please enter a number: ");
 		scanf("%d", &getdata);
 
-		if(0!=getdata)
+		if(3098==getdata)
+			break;
+
+		if(0 != getdata)
 		{
 			/* write a message to the server */
 			sprintf(msg, "Hi Bob-%d!!", getdata);
 			printf("send [%s]\n", msg);	//dbg
-			write(sockfd, msg, sizeof(msg));
-#if 0
+			ret = write(sockfd, msg, sizeof(msg));
+			if(sizeof(msg) != ret)
+				printf("write ret:%d\n", ret);	//dbg
+
 			/* read a message from the client */
-			len = read(sockfd, msg, MAX_SIZE); 
+			read_len = read(sockfd, msg, MAX_SIZE);
 			/* make sure it's a proper string */
-			msg[len] = 0;
-			printf("%s\n", msg);
-#endif
+			msg[read_len] = 0;
+			printf("Receive: len=[%d] msg=[%s] for FD#%d\n", read_len, msg, sockfd);
+
 			getdata=0;
 		}
 	}
-	close(sockfd);
-//  write(sockfd, "hello world", sizeof("hello world"));
-//<asus-bob->
+	ret = close(sockfd);
+	if(0 != ret)
+		printf("close ret:%d\n", ret);	//dbg
 }
 
-
-//			strcpy(msg,"Hi Bob!!");
